@@ -1,3 +1,4 @@
+import const
 from config import main
 from src.dbs.MySQL import MySQL
 from src.helpers.Logger import Logger
@@ -16,7 +17,7 @@ class TaskLoader(BaseLoader):
         # 从环境参数里获取仅加载的任务ID
         sub_command = ""
         try:
-            ids = main.config["task"].get("range", None)
+            ids = const.TASK_RANGE
             if type(ids) == list and len(ids) > 0:
                 ids = ','.join([str(_id) for _id in ids])
                 if first:
