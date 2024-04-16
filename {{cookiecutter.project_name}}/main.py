@@ -1,5 +1,4 @@
 import _thread
-import asyncio
 
 from config.main import config
 from src.helpers.Logger import Logger
@@ -17,6 +16,6 @@ manager.start()
 _thread.start_new_thread(manager.listen, ())
 
 try:
-    asyncio.get_event_loop().run_forever()
+    manager.runner.listen()
 except KeyboardInterrupt:
     LOGGER.log("程序退出")

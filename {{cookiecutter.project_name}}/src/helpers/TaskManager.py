@@ -1,13 +1,13 @@
-import asyncio
 import importlib
 import json
-import threading
 from time import sleep
 from config import main
 from src.helpers.Logger import Logger
-from apscheduler.schedulers.asyncio import AsyncIOScheduler as Scheduler
+from apscheduler.schedulers.background import BackgroundScheduler as Scheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.cron import CronTrigger
+
+from src.helpers.TaskRunner import TaskRunner
 from src.loaders.TaskLoader import TaskLoader
 
 """
@@ -18,47 +18,6 @@ from src.loaders.TaskLoader import TaskLoader
 
 LOGGER = Logger()
 
-# 注册协程池
-LOOPS = [
-    asyncio.new_event_loop(),
-    asyncio.new_event_loop(),
-    asyncio.new_event_loop(),
-    asyncio.new_event_loop(),
-]
-
-
-async def run_task(task: dict, class_name):
-    """
-    监听任务触发的方法
-    :param task: dict 任务数据
-    :param class_name: 任务绑定的响应类
-    :return:
-    """
-    instance = class_name()
-    instance.set_params(json.loads(task["params"]))
-    LOGGER.info(f"开始运行 {task['name']} # {task['id']} 任务")
-    try:
-        await instance.runnable()
-        LOGGER.success(f"任务 {task['name']} # {task['id']} 运行完成")
-    except Exception as e:
-        LOGGER.err(f"任务 {task['name']} # {task['id']} 运行出错 : ({e.__class__.__name__}) {str(e)}")
-
-
-def run(task: dict, class_name):
-    """
-    将任务运行在协程中
-    :param task: dict 任务数据
-    :param class_name: 任务绑定的响应类
-    :return:
-    """
-    for loop in LOOPS:
-        if not loop.is_running():
-            asyncio.set_event_loop(loop)
-            thread = threading.Thread(target=loop.run_until_complete, args=(run_task(task, class_name),))
-            thread.start()
-            thread.join()
-            break
-
 
 class TaskManager:
     def __init__(self):
@@ -68,6 +27,8 @@ class TaskManager:
         self.count = 0
         # 任务调度器
         self.scheduler = Scheduler()
+        # 任务运行器
+        self.runner = TaskRunner()
 
     def start(self):
         """
@@ -127,7 +88,7 @@ class TaskManager:
             id=str(task["id"]),
             name=task['name'],
             args=[task, self.get_task_class(task["path"])],
-            func=run,
+            func=self.runner.add_jog,
             trigger=timer
         )
         return True
@@ -184,3 +145,4 @@ class TaskManager:
         while True:
             self.load_task()
             sleep(duration)
+

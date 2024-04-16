@@ -21,9 +21,9 @@ class BaseTask(abc.ABC):
         """
         self.params = params
 
-    async def runnable(self):
+    def runnable(self):
         if self.before_run():
-            await self.run()
+            self.run()
             self.after_run()
 
     def before_run(self) -> bool:
@@ -42,7 +42,7 @@ class BaseTask(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def run(self):
+    def run(self):
         """
         任务运行的主函数，由子类实现
         :return:

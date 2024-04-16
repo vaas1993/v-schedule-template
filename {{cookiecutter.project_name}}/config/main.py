@@ -1,7 +1,10 @@
 """
 主配置文件
 """
+import os
+
 import config.dbs
+import config.mails
 
 config = {
     # 欢迎语
@@ -9,8 +12,12 @@ config = {
 
     # 任务模块配置
     "task": {
-        # 任务配置更新间隔，秒
+        # 任务更新间隔，秒
         "duration": 60,
+        # 设置一个 int 列表程序将只加载这部分任务，这在开发阶段很有用，设置为空列表、None、不定义时将自动忽略
+        "range": [],
+        # 任务执行器线程池数量
+        "pool": max(4, os.cpu_count())
     },
 
     # 邮件配置

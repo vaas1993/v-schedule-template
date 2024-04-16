@@ -128,12 +128,12 @@ class BaseEmailSenderTask(BaseTask, ABC):
         """
         生成随机附件名
         该方法不会生成文件，仅返回文件路径
-        :param dir_name: 文件夹名称，存在于 files/attachments 目录下，不存在时将自动创建文件夹
+        :param dir_name: 文件夹名称，存在于 runtime/attachments 目录下，不存在时将自动创建文件夹
         :param ext_name: 文件扩展名
         :param prefix: 文件前缀，默认是 attach ，可以手动指定
         :return:
         """
-        path = f"files/attachments/{dir_name}"
+        path = f"runtime/attachments/{dir_name}"
         if not os.path.exists(path):
             os.mkdir(path)
 

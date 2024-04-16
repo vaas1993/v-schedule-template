@@ -46,7 +46,7 @@ class Logger:
         :return:
         """
         date = datetime.datetime.now().strftime("%Y%m%d")
-        path = f"files/logs/{date}.log"
+        path = f"runtime/logs/{date}.log"
         if self.log_file is None:
             self.log_file = open(file=path, mode="a")
         if not os.path.exists(path) or self.log_file.name != path:
