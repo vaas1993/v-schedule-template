@@ -5,7 +5,7 @@
 """
 
 # 环境，取值范围有 production / preview / test / development
-ENV = "development"
+ENV = "{{INIT_ENV}}"
 
 # 当前是否生成环境
 ENV_PRODUCTION = ENV == "production"
@@ -19,6 +19,9 @@ ENV_TEST = ENV == "test"
 # 当前是否开发环境
 ENV_DEVELOPMENT = ENV == "development"
 
+# 指定查询任务，设置一个 int 列表可以指定加载任务范围，这在调试阶段很有用，不定义、空列表或None时不生效
+TASK_RANGE = None
+
 # 是否启用 DEBUG 模式，启动 DEBUG 模式后运行时会产生一些额外的数据（比如打印错误信息）
 # 开启后会影响运行性能，生产环境建议关闭
-DEBUG = True
+DEBUG = {{INIT_DEBUG}}
